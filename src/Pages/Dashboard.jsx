@@ -15,6 +15,7 @@ import {
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { NavLink, Outlet } from "react-router-dom";
+import { FaIndianRupeeSign } from "react-icons/fa6";
 
 const Dashboard = () => {
   return (
@@ -37,8 +38,8 @@ const Sidebar = () => {
     { title: "Dashboard", icon: FiHome, path: "/" },
     { title: "Admissions", icon: FiBook, path: "/admissions" },
     {
-      title: "Fee",
-      icon: FiDollarSign,
+      title: "Fees",
+      icon: FaIndianRupeeSign,
       path: "/fee",
       dropdown: [
         { title: "Hostel Fee", path: "/fee/hostel" },
