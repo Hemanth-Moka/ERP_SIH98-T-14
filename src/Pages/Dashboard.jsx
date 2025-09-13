@@ -56,6 +56,7 @@ const Sidebar = () => {
     { title: "Room Allocation", icon: FiFileText, path: "/roomallocation" },
     { title: "Room Status", icon: FiBarChart, path: "/roomstatus" },
     { title: "View All", icon: FiUsers, path: "/viewall" },
+    { title: "Add Student", icon: FiUsers, path: "/addstudent" },
     { title: "Feedback", icon: FiClipboard, path: "/feedback" },
     { title: "Login", icon: FiFileText, path: "/login" },
   ];

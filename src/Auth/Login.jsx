@@ -16,6 +16,12 @@ export default function Login() {
     });
   };
 
+  const dummyUsers = [
+  { email: "admin@example.com", password: "admin123", role: "ADMIN" },
+  { email: "user@example.com", password: "user123", role: "USER" },
+];
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Login Data:", formData);
