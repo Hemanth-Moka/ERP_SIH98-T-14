@@ -21,6 +21,7 @@ import SemFee from "./Pages/Fee/SemFee";
 import ExamFee from "./Pages/Fee/ExamFee";
 import Fine from "./Pages/Fee/Fine";
 import Condonation from "./Pages/Fee/Condonation";
+import AddStudent from "./Auth/Admin/AddStudent";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="viewall" element={<Viewall />} />
           <Route path="login" element={<Login />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="addstudent" element={<AddStudent />} />
           <Route path="feedback" element={<Feedback />} />
           <Route path="fee/hostel" element={<Hostelfee />} />
           <Route path="fee/semester" element={<SemFee />} />

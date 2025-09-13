@@ -1,9 +1,9 @@
-*
+
 A low-cost ERP prototype for colleges that integrates admissions, fee collection, hostel allocation
-*
+
 Approaches
 /--> Google Form -> Excel ->  Website 
-/->Payment Automation Recipt By AI Tools 
+/->Payment Automation Recipt By AI Tools (Pending)
 
 
 
