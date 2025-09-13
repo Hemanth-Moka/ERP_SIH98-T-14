@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FiMail, FiLock } from "react-icons/fi";
+import axios from "axios";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -7,6 +8,8 @@ export default function Login() {
     password: "",
     remember: false,
   });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -16,9 +19,29 @@ export default function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login Data:", formData);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/login", {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      console.log(response.data);
+      setSuccess("Login Successful! Welcome " + response.data.user.email);
+
+      // Optionally, store token in localStorage if you implement JWT
+      // localStorage.setItem("token", response.data.token);
+
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.message || "Server error. Please try again later."
+      );
+    }
   };
 
   return (
@@ -28,9 +51,9 @@ export default function Login() {
         <div className="space-y-6 max-w-md">
           <h1 className="text-4xl font-bold">Welcome Back!</h1>
           <p className="text-lg text-blue-100">
-            Enter your credentials to access your dashboard and manage fees, results, and more efficiently.
+            Enter your credentials to access your dashboard and manage fees,
+            results, and more efficiently.
           </p>
-          {/* Optional illustration */}
           <img
             src="https://img.freepik.com/free-vector/business-people-working-office_74855-5244.jpg?w=740&t=st=1694619081~exp=1694619681~hmac=0bb85b1b2f7e1e2a1e9f1a1f8e9db02c1c4f44b3e8b7e2c0d8d08f49be6d6c9d"
             alt="Business illustration"
@@ -45,6 +68,11 @@ export default function Login() {
           <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">
             Sign In
           </h2>
+
+          {/* Display error / success */}
+          {error && <p className="text-red-500 mb-2">{error}</p>}
+          {success && <p className="text-green-500 mb-2">{success}</p>}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
