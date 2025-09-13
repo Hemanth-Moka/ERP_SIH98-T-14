@@ -12,6 +12,7 @@ import Roomallocation from "./Pages/Hostel/Roomallocation";
 import RoomStatus from "./Pages/Hostel/RoomStatus";
 import Fee from "./Pages/Fee";
 import Admissions from "./Pages/Admissions";
+import NotFound from "./Pages/NotFound";
 import Feedback from "./Pages/Feedback";
 
 // Fee Subpages
@@ -47,6 +48,7 @@ function App() {
           <Route path="roomstatus" element={<RoomStatus />} />
           <Route path="fee" element={<Fee />} />
           <Route path="admissions" element={<Admissions />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </Router>
