@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { FiMail, FiLock } from "react-icons/fi";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -19,12 +21,6 @@ export default function Login() {
     });
   };
 
-  const dummyUsers = [
-  { email: "admin@example.com", password: "admin123", role: "ADMIN" },
-  { email: "user@example.com", password: "user123", role: "USER" },
-];
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -39,8 +35,12 @@ export default function Login() {
       console.log(response.data);
       setSuccess("Login Successful! Welcome " + response.data.user.email);
 
-      // Optionally, store token in localStorage if you implement JWT
-      // localStorage.setItem("token", response.data.token);
+      // Role-based redirection
+      if (response.data.user.role === "ADMIN") {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/student-dashboard");
+      }
 
     } catch (err) {
       console.error(err);
@@ -75,12 +75,10 @@ export default function Login() {
             Sign In
           </h2>
 
-          {/* Display error / success */}
           {error && <p className="text-red-500 mb-2">{error}</p>}
           {success && <p className="text-green-500 mb-2">{success}</p>}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-2">
                 Email
@@ -99,7 +97,6 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-2">
                 Password
@@ -118,7 +115,6 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Remember Me */}
             <div className="flex items-center justify-between">
               <label className="inline-flex items-center text-gray-600">
                 <input
@@ -135,7 +131,6 @@ export default function Login() {
               </a>
             </div>
 
-            {/* Login Button */}
             <button
               type="submit"
               className="w-full bg-blue-600 text-white p-3 rounded-xl font-medium hover:bg-blue-700 transition"
@@ -144,7 +139,6 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Signup Link */}
           <p className="mt-6 text-gray-500 text-center text-sm">
             Don't have an account?{" "}
             <a href="#" className="text-blue-600 hover:underline">
