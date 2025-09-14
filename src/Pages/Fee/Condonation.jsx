@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import jsPDF from "jspdf";
 
 export default function Condonation() {
   const [formData, setFormData] = useState({
@@ -12,24 +13,72 @@ export default function Condonation() {
     paymentMethod: "",
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  const generateReceipt = (data) => {
+    const doc = new jsPDF();
+    const receiptId = "RCPT-" + Date.now();
+
+    doc.setFontSize(16);
+    doc.text("Condonation Fee Payment Receipt", 20, 20);
+
+    doc.setFontSize(12);
+    doc.text(`Receipt ID: ${receiptId}`, 20, 35);
+    doc.text(`Student Name: ${data.studentName}`, 20, 45);
+    doc.text(`Student ID: ${data.studentId}`, 20, 55);
+    doc.text(`Course: ${data.course}`, 20, 65);
+    doc.text(`Semester: ${data.semester}`, 20, 75);
+    doc.text(`Condonation Reason: ${data.condonationReason}`, 20, 85);
+    doc.text(`Fee Amount: ₹${data.feeAmount}`, 20, 95);
+    doc.text(`Payment Date: ${data.paymentDate}`, 20, 105);
+    doc.text(`Payment Method: ${data.paymentMethod}`, 20, 115);
+
+    doc.text("✔ Payment Successful", 20, 130);
+
+    doc.save(`${data.studentId}_condonation_receipt.pdf`);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Condonation Fee Submitted", formData);
-    // Razorpay or backend integration can go here
+
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    console.log("Condonation Fee Submitted ✅", formData);
+
+    // Simulating payment success
+    setTimeout(() => {
+      generateReceipt(formData); // generate receipt PDF
+      alert("Payment Successful! Receipt downloaded.");
+      setFormData({
+        studentName: "",
+        studentId: "",
+        course: "",
+        semester: "",
+        condonationReason: "",
+        feeAmount: "",
+        paymentDate: "",
+        paymentMethod: "",
+      });
+      setIsSubmitting(false);
+    }, 2000);
   };
 
   return (
     <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
-      <div className="bg-white shadow-2xl p-8 w-full max-w-4xl">
+      <div className="bg-white shadow-2xl p-8 w-full max-w-4xl rounded-2xl">
         <h2 className="text-3xl font-bold text-blue-700 mb-8 text-center">
           Condonation Fee Payment
         </h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
           {/* Student Name */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-2">
@@ -164,9 +213,14 @@ export default function Condonation() {
           <div className="md:col-span-2 flex justify-center">
             <button
               type="submit"
-              className="w-full md:w-1/2 bg-blue-600 text-white p-3 rounded-xl font-medium hover:bg-blue-700 transition"
+              disabled={isSubmitting}
+              className={`w-full md:w-1/2 p-3 rounded-xl font-medium transition ${
+                isSubmitting
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
+              }`}
             >
-              Pay Condonation Fee
+              {isSubmitting ? "Processing..." : "Pay Condonation Fee"}
             </button>
           </div>
         </form>

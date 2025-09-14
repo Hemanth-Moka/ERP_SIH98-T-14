@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { jsPDF } from "jspdf"; // For PDF receipt
 
 export default function Hostelfee() {
   const [formData, setFormData] = useState({
@@ -16,19 +17,73 @@ export default function Hostelfee() {
     setFormData({ ...formData, [name]: value });
   };
 
+  // Generate Receipt PDF
+  const generateReceipt = () => {
+    const doc = new jsPDF();
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Hostel Fee Payment Receipt", 20, 20);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+
+    doc.text(`Student Name: ${formData.studentName}`, 20, 40);
+    doc.text(`Student ID: ${formData.studentId}`, 20, 50);
+    doc.text(`Hostel Name: ${formData.hostelName}`, 20, 60);
+    doc.text(`Room Number: ${formData.roomNumber}`, 20, 70);
+    doc.text(`Fee Amount: ₹${formData.feeAmount}`, 20, 80);
+    doc.text(`Payment Date: ${formData.paymentDate}`, 20, 90);
+    doc.text(`Payment Method: ${formData.paymentMethod}`, 20, 100);
+
+    doc.text("✅ Payment Successful", 20, 120);
+
+    doc.save("HostelFeeReceipt.pdf");
+  };
+
+  // Handle Form Submission
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Submitted", formData);
-    // Razorpay or backend integration goes here
+
+    if (formData.paymentMethod === "online") {
+      const options = {
+        key: "rzp_test_1234567890", // Replace with your Razorpay Key ID
+        amount: formData.feeAmount * 100, // Amount in paise
+        currency: "INR",
+        name: "KL University",
+        description: "Hostel Fee Payment",
+        handler: function (response) {
+          alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+          generateReceipt();
+        },
+        prefill: {
+          name: formData.studentName,
+          email: "student@example.com",
+          contact: "9876543210",
+        },
+        theme: {
+          color: "#1D4ED8",
+        },
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } else {
+      alert("Payment Successful via " + formData.paymentMethod);
+      generateReceipt();
+    }
   };
 
   return (
     <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
-      <div className="bg-white shadow-2xl  p-8 w-full max-w-4xl">
+      <div className="bg-white shadow-2xl p-8 w-full max-w-4xl">
         <h2 className="text-3xl font-bold text-blue-700 mb-8 text-center">
           Hostel Fee Payment
         </h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
           {/* Student Name */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-2">
@@ -143,7 +198,7 @@ export default function Hostelfee() {
             </select>
           </div>
 
-          {/* Empty div for alignment */}
+          {/* Submit */}
           <div className="md:col-span-2 flex justify-center">
             <button
               type="submit"
