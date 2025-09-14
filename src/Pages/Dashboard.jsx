@@ -10,15 +10,16 @@ import {
   FiBook,
   FiChevronRight,
   FiChevronDown,
+  FiLogOut,
 } from "react-icons/fi";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { FaIndianRupeeSign } from "react-icons/fa6";
 
 /* -------------------- Dashboard -------------------- */
 const Dashboard = () => {
   return (
     <div className="flex flex-col md:flex-row bg-indigo-50 min-h-screen">
-      {/* Sidebar - always visible */}
+      {/* Sidebar */}
       <div className="w-full md:w-64 md:shrink-0 border-b md:border-r border-slate-300 bg-white overflow-y-auto">
         <Sidebar />
       </div>
@@ -36,8 +37,19 @@ export default Dashboard;
 /* -------------------- Sidebar -------------------- */
 const Sidebar = () => {
   const [feeOpen, setFeeOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const menuItems = [
+  // Get role from localStorage ("ADMIN", "STUDENT", or null)
+  const role = localStorage.getItem("role");
+
+  const handleLogout = () => {
+    localStorage.removeItem("role");
+    localStorage.removeItem("token");
+    navigate("/"); // back to homepage
+  };
+
+  // Define all menus
+  const allMenus = [
     { title: "Dashboard", icon: FiHome, path: "/" },
     { title: "Admissions", icon: FiBook, path: "/admissions" },
     {
@@ -61,6 +73,49 @@ const Sidebar = () => {
     { title: "Login", icon: FiFileText, path: "/login" },
   ];
 
+  // Admin-only sidebar
+  const adminMenus = [
+    { title: "Dashboard", icon: FiHome, path: "/" },
+    { title: "Admissions", icon: FiBook, path: "/admissions" },
+    {
+      title: "Fees",
+      icon: FaIndianRupeeSign,
+      dropdown: [
+        { title: "Hostel Fee", path: "/fee/hostel" },
+        { title: "Sem Fee", path: "/fee/semester" },
+        { title: "Exam Fee", path: "/fee/exam" },
+      ],
+    },
+    { title: "Results", icon: FiClipboard, path: "/results" },
+    { title: "Room Allocation", icon: FiFileText, path: "/roomallocation" },
+    { title: "Room Status", icon: FiBarChart, path: "/roomstatus" },
+    { title: "View All", icon: FiUsers, path: "/viewall" },
+    { title: "Add Student", icon: FiUsers, path: "/addstudent" },
+    { title: "Feedback", icon: FiClipboard, path: "/feedback" },
+  ];
+
+  // Student-only sidebar
+  const studentMenus = [
+    { title: "Dashboard", icon: FiHome, path: "/" },
+    {
+      title: "Fees",
+      icon: FaIndianRupeeSign,
+      dropdown: [
+        { title: "Hostel Fee", path: "/fee/hostel" },
+        { title: "Sem Fee", path: "/fee/semester" },
+        { title: "Exam Fee", path: "/fee/exam" },
+      ],
+    },
+    { title: "Results", icon: FiClipboard, path: "/results" },
+    { title: "Hall Ticket", icon: FiKey, path: "/hallticket" },
+    { title: "Room Status", icon: FiBarChart, path: "/roomstatus" },
+    { title: "Feedback", icon: FiClipboard, path: "/feedback" },
+  ];
+
+  let menuItems = allMenus; // default guest menu
+  if (role === "ADMIN") menuItems = adminMenus;
+  else if (role === "STUDENT") menuItems = studentMenus;
+
   return (
     <nav className="p-3 space-y-1">
       {/* Logo / Title */}
@@ -68,7 +123,13 @@ const Sidebar = () => {
         <Logo />
         <div>
           <span className="block text-xs font-semibold">ERP System</span>
-          <span className="block text-xs text-slate-500">Welcome</span>
+          <span className="block text-xs text-slate-500">
+            {role === "ADMIN"
+              ? "Admin Panel"
+              : role === "STUDENT"
+              ? "Student Portal"
+              : "Guest Mode"}
+          </span>
         </div>
       </div>
 
@@ -123,6 +184,17 @@ const Sidebar = () => {
           </NavLink>
         )
       )}
+
+      {/* Logout - only for logged in users */}
+      {(role === "ADMIN" || role === "STUDENT") && (
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100 mt-4 w-full"
+        >
+          <FiLogOut className="text-lg" />
+          Logout
+        </button>
+      )}
     </nav>
   );
 };
@@ -137,3 +209,6 @@ const Logo = () => (
     />
   </div>
 );
+
+export { Sidebar };
+

@@ -5,6 +5,8 @@ import Login from "./Auth/Login";
 import Registration from "./Auth/Registration";
 import Viewall from "./Auth/Admin/Viewall";
 import Dashboard from "./Pages/Dashboard";
+import AdminDashboard from "./Auth/Admin/AdminDashboard";
+import StudentDashboard from "./Auth/Admin/StudentDashboard";
 import Profile from "./Pages/Profile";
 import Results from "./Pages/Exam/Results";
 import HallTicket from "./Pages/Exam/HallTicket";
@@ -30,6 +32,8 @@ function App() {
         {/* Public Routes */}
         {/* <Route path="/login" element={<Login />} /> */}
         <Route path="/register" element={<Registration />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/student-dashboard" element={<StudentDashboard />} />
 
         {/* Protected Routes (inside Dashboard layout with Sidebar) */}
         <Route path="/" element={<Dashboard />}>
