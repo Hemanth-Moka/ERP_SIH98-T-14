@@ -20,26 +20,67 @@ export default function Condonation() {
     setFormData({ ...formData, [name]: value });
   };
 
+  // Generate structured PDF
   const generateReceipt = (data) => {
     const doc = new jsPDF();
     const receiptId = "RCPT-" + Date.now();
 
-    doc.setFontSize(16);
-    doc.text("Condonation Fee Payment Receipt", 20, 20);
+    // Title
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Condonation Fee Payment Receipt", 105, 20, { align: "center" });
 
+    // Outer border
+    doc.setLineWidth(0.5);
+    doc.rect(15, 30, 180, 140);
+
+    // Receipt ID
     doc.setFontSize(12);
-    doc.text(`Receipt ID: ${receiptId}`, 20, 35);
-    doc.text(`Student Name: ${data.studentName}`, 20, 45);
-    doc.text(`Student ID: ${data.studentId}`, 20, 55);
-    doc.text(`Course: ${data.course}`, 20, 65);
-    doc.text(`Semester: ${data.semester}`, 20, 75);
-    doc.text(`Condonation Reason: ${data.condonationReason}`, 20, 85);
-    doc.text(`Fee Amount: ₹${data.feeAmount}`, 20, 95);
-    doc.text(`Payment Date: ${data.paymentDate}`, 20, 105);
-    doc.text(`Payment Method: ${data.paymentMethod}`, 20, 115);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Receipt ID: ${receiptId}`, 20, 40);
 
-    doc.text("✔ Payment Successful", 20, 130);
+    // Horizontal line
+    doc.line(20, 45, 190, 45);
 
+    // Student Information
+    doc.setFont("helvetica", "bold");
+    doc.text("Student Information", 20, 55);
+    doc.setFont("helvetica", "normal");
+
+    doc.text(`Name: ${data.studentName}`, 20, 65);
+    doc.text(`Student ID: ${data.studentId}`, 20, 75);
+    doc.text(`Course: ${data.course}`, 20, 85);
+    doc.text(`Semester: ${data.semester}`, 20, 95);
+
+    // Line separator
+    doc.line(20, 105, 190, 105);
+
+    // Payment Information
+    doc.setFont("helvetica", "bold");
+    doc.text("Payment Details", 20, 115);
+    doc.setFont("helvetica", "normal");
+
+    doc.text(`Reason: ${data.condonationReason}`, 20, 125);
+    doc.text(`Fee Amount: ₹${data.feeAmount}`, 20, 135);
+    doc.text(`Payment Date: ${data.paymentDate}`, 20, 145);
+    doc.text(`Payment Method: ${data.paymentMethod}`, 20, 155);
+
+    // Success message
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 128, 0);
+    doc.text("✔ Payment Successful", 105, 170, { align: "center" });
+
+    // Footer
+    doc.setTextColor(100);
+    doc.setFontSize(10);
+    doc.text(
+      "This is a system generated receipt. No signature required.",
+      105,
+      185,
+      { align: "center" }
+    );
+
+    // Save PDF
     doc.save(`${data.studentId}_condonation_receipt.pdf`);
   };
 
@@ -51,9 +92,9 @@ export default function Condonation() {
 
     console.log("Condonation Fee Submitted ✅", formData);
 
-    // Simulating payment success
+    // Simulate payment success
     setTimeout(() => {
-      generateReceipt(formData); // generate receipt PDF
+      generateReceipt(formData); // Generate receipt
       alert("Payment Successful! Receipt downloaded.");
       setFormData({
         studentName: "",

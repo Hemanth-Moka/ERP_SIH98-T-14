@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { jsPDF } from "jspdf";
 
 export default function ExamFee() {
   const [formData, setFormData] = useState({
@@ -12,18 +13,56 @@ export default function ExamFee() {
   });
 
   const [submittedData, setSubmittedData] = useState(null);
+  const [receiptId, setReceiptId] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Generate a random receipt ID
+  const generateReceiptId = () => {
+    return "REC-" + Math.floor(100000 + Math.random() * 900000);
+  };
+
+  // Generate PDF Receipt
+  const generatePDF = (data, id) => {
+    const doc = new jsPDF();
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Exam Fee Payment Receipt", 20, 20);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.text(`Receipt ID: ${id}`, 20, 40);
+    doc.text(`Student Name: ${data.studentName}`, 20, 50);
+    doc.text(`Student ID: ${data.studentId}`, 20, 60);
+    doc.text(`Exam Name: ${data.examName}`, 20, 70);
+    doc.text(`Semester: ${data.semester}`, 20, 80);
+    doc.text(`Fee Amount: ₹${data.feeAmount}`, 20, 90);
+    doc.text(`Payment Date: ${data.paymentDate}`, 20, 100);
+    doc.text(`Payment Method: ${data.paymentMethod}`, 20, 110);
+
+    doc.text("✅ Payment Successful", 20, 130);
+    doc.text("This is a system-generated receipt.", 20, 140);
+
+    doc.save(`${id}_ExamFeeReceipt.pdf`);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Exam Fee Submitted", formData);
 
-    // Store submitted data for receipt
+    // Generate receipt ID
+    const newReceiptId = generateReceiptId();
+
+    // Store submitted data
     setSubmittedData(formData);
+    setReceiptId(newReceiptId);
+
+    // Auto-generate PDF
+    generatePDF(formData, newReceiptId);
 
     // Reset form
     setFormData({
@@ -161,7 +200,7 @@ export default function ExamFee() {
             </select>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <div className="md:col-span-2 flex justify-center">
             <button
               type="submit"
@@ -173,13 +212,16 @@ export default function ExamFee() {
         </form>
       </div>
 
-      {/* Receipt */}
+      {/* Receipt Preview */}
       {submittedData && (
         <div className="bg-white shadow-2xl p-8 w-full max-w-3xl rounded-xl">
           <h3 className="text-2xl font-bold text-green-700 mb-4 text-center">
             ✅ Payment Receipt
           </h3>
           <div className="space-y-2 text-gray-700">
+            <p>
+              <span className="font-semibold">Receipt ID:</span> {receiptId}
+            </p>
             <p>
               <span className="font-semibold">Student Name:</span>{" "}
               {submittedData.studentName}
